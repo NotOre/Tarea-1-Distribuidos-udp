@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    redis:
+        image: bitnami/redis:latest
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+
+        ports:
+            - '6379:6379'
+        volumes:
+            - 'redis_data:/bitnami/redis/data'
+
+    app:
+        build: .
+        ports:
+            - "3000:3000"
+        depends_on:
+            - redis
+        environment:
+            REDIS_HOST: redis
+        command: >
+            sh -c "npm start && node traffic.js"
+
+volumes:
+  redis_data:
+    driver: local
+
